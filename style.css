@@ -1,15 +1,40 @@
 
 /* TOPBAR */
 
-/* Réinitialisation basique */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+/* --- Reset léger et cohérent --- */
+:where(*, *::before, *::after) { box-sizing: border-box; }
+:where(html, body) { margin: 0; }
+:where(ul[role="list"], ol[role="list"]) { list-style: none; margin: 0; padding: 0; }
+
+
+
+:root{
+  /* Hauteur topbar fluide pour PC */
+  --topbar-h: clamp(64px, 6.5vw, 84px);
+
+  /* Container max pour PC (1366–1920) */
+  --container-max: 1200px;
+
+  /* Couleurs état "transparent" (au-dessus d'une image sombre) */
+  --topbar-bg: rgba(255,255,255,0);         /* fond transparent */
+  --topbar-fg: #ffffff;                     /* texte clair par défaut */
+  --topbar-link-hover: #f0f0f0;
+  --topbar-shadow: 0 2px 5px rgba(0,0,0,0); /* pas d’ombre au départ */
+
+  /* Couleurs état "scrolled" (fond clair) */
+  --topbar-bg-solid: rgba(255,255,255,1);
+  --topbar-fg-solid: #111111;
+  --topbar-link-hover-solid: #444;
+  --topbar-shadow-solid: 0 4px 14px rgba(0,0,0,0.12);
 }
+
 
 body {
   font-family: Arial, sans-serif;
+  color: #111;
+  background: #fff;
+  text-rendering: optimizeLegibility;
+
 }
 
 /* Barre de navigation fixe */
@@ -19,97 +44,97 @@ body {
   top: 0;
   left: 0;
   width: 100%;
-  background-color: rgba(255, 255, 255, 0); /* Transparent au départ */
-  transition: background-color 0.4s ease; /* Animation fluide */
+  background-color: var(--topbar-bg); /* Transparent au départ */
+  transition: background-color 0.35s ease, box-shadow 0.35s ease, backdrop-filter 0.35s ease; /* Animation fluide */
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 80px;
+  height: var(--topbar-h);
   z-index: 1000;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0);
+  box-shadow: var(--topbar-shadow);;
 }
 
 
-.topbar.scrolled {
-  background-color: rgba(255, 255, 255, 1); /* Devient blanche */
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+
+.topbar.scrolled{
+  background-color: var(--topbar-bg-solid);
+  box-shadow: var(--topbar-shadow-solid);
+  backdrop-filter: saturate(120%) blur(6px);
 }
+
 
 
 /* Contenu de la barre */
-.topbar__nav {
+
+.topbar__nav{
+  width: min(100% - 2rem, var(--container-max));
   display: flex;
   align-items: center;
   justify-content: space-between;
-  width: 90%;
-  max-width: 1200px;
+  gap: 1rem;
 }
 
+
 .brand {
-  font-size: 1.8rem;
-  color: white;
+  font-size: clamp(1.1rem, 0.9rem + 0.6vw, 1.6rem);
+  font-weight: 600;
+  color: var(--topbar-fg);
   text-decoration: none;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 /* Menu */
 .topbar__menu {
   list-style: none;
   display: flex;
-  gap: 30px;
+  gap: clamp(0.75rem, 0.4rem + 1vw, 2rem);
+  align-items: center;
 }
 
-.topbar__menu li a {
-  color: white;
+
+.topbar__menu a{
+  color: var(--topbar-fg);
   text-decoration: none;
-  font-size: 1.2rem;
-  transition: color 0.3s ease;
+  font-size: clamp(1.1rem, 1rem + 0.25vw, 1.4rem);
+  padding: 0.35rem 0.25rem; /* léger padding vertical pour zone cliquable */
+  border-radius: 6px;
+  transition: color 0.25s ease, background-color 0.25s ease;
 }
 
-.topbar__menu li a:hover {
-  color: #d4d4d4;
+
+
+.topbar__menu a:hover{
+  color: var(--topbar-link-hover);
 }
+
+/* Lorsque scrolled, on bascule automatiquement les couleurs du texte/hover via cascade */
+.topbar.scrolled .brand,
+.topbar.scrolled .topbar__menu a{
+  color: var(--topbar-fg-solid);
+}
+
+
 
 /* Pour éviter que le contenu passe sous la barre */
 main {
-  margin-top: 80px;
+  padding-top: var(--topbar-h);
 }
 
-.topbar__logo {
-  height: 70px;
-  margin-left: 20px;
+
+.topbar__logo{
+  height: clamp(36px, 4vw, 48px);
+  inline-size: auto;
 }
+
 
 /* Texte noir pour brand et menu */
 .brand, .topbar__menu li a {
   color: black; /* Texte noir */
 }
 
-/* FOOTER */
-
-.bottombar {
-  width: 100%;
-  background-color: #0f7d4a; /* Même vert avec opacité */
-  color: #ffffff;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 50px;
-  font-weight: normal; /* Pas en gras */
-  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2);
-  margin-top: 40px; /* Ajoute un espace avant le footer */
-}
-
-
-.bottombar__content a {
-  color: #ffffff;
-  text-decoration: none;
-}
-
-.bottombar__content a:hover {
-  text-decoration: underline;
-}
-
-/* Police sportive */
 
 .topbar, .brand, .topbar__menu li a {
   font-family: Tahoma, Arial, sans-serif;
@@ -117,596 +142,990 @@ main {
   color: black;
 }
 
-
 html {
   scroll-behavior: smooth;
 }
 
+.brand img {
+  height: calc(var(--topbar-h) - 10px); /* Ajuste la marge si nécessaire */
+  width: auto;
+  object-fit: contain; /* évite toute déformation */
+}
 
-.video-container {
+
+
+
+
+
+
+
+
+/* FOOTER */
+
+
+:root{
+  --container-max: 1200px;   /* même valeur que la topbar pour cohérence */
+  --footer-bg: #0f7d4a;
+  --footer-fg: #ffffff;
+}
+
+footer.bottombar{
+  width: 100%;
+  background-color: var(--footer-bg);
+  color: var(--footer-fg);
+  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* Le conteneur central existant : .bottombar__content */
+.bottombar__content{
+  width: min(100% - 2rem, var(--container-max));
+  margin-inline: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;  /* centré (tu peux mettre space-between si tu ajoutes d’autres blocs) */
+  text-align: center;
+  gap: 0.75rem;
+  padding-block: clamp(0.75rem, 0.6rem + 0.5vw, 1rem); /* padding fluide au lieu d’une hauteur fixe */
+}
+
+/* Texte et liens */
+.bottombar__content p{
+  margin: 0;
+  font-size: clamp(0.95rem, 0.9rem + 0.25vw, 1.05rem);
+}
+
+.bottombar__content a{
+  color: var(--footer-fg);
+  text-decoration: none;
+  border-radius: 4px;
+}
+
+/* --- VIDÉO FULLSCREEN HERO --- */
+.video-container{
   position: relative;
   width: 100%;
-  height: 100vh; /* Pleine hauteur de l'écran */
+  /* dvh/svh pour mobile, vh pour fallback desktop */
+  min-height: 100svh; /* iOS 16+ / modernes */
+  min-height: 100dvh; /* Android / Chrome */
+  min-height: 100vh;  /* fallback */
   overflow: hidden;
 }
 
-.video-container video {
+.video-container video{
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover; /* Remplit sans déformation */
+  object-fit: cover;
 }
 
+/* Main */
 
-
-main {
-  margin-top: 0; /* Pas besoin de marge, la vidéo prend la place */
+:root{
+  --container-max: 1200px;
+  --gap: 1rem;
+  --gap-lg: 1.5rem;
+  --green: #0f7d4a;
+  --text: #111;
+  --muted: #5a5a5a;
+  --border: rgba(15,125,74,0.12);
+  --radius-lg: 12px;
 }
 
-.section {
-  width: 100%;
-  padding: 60px 20px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+main{
+  /* Laisse la topbar gérer padding-top via var(--topbar-h) si tu l’utilises.
+     Ici, ne remets pas de margin-top: 0 qui pourrait écraser cette logique. */
+}
+
+/* Conteneur de section centré et fluide */
+.section{
+  width: min(100% - 2rem, var(--container-max));
+  margin-inline: auto;
+  padding-block: clamp(2rem, 6vw, 4rem);
+  display: block; /* plus de flex par défaut */
   min-height: 400px;
 }
 
-
-.green-section {
-  background-color: #0f7d4a;
+/* Variantes de fond */
+.white-section{
+  background: #fff;
+  color: var(--text);
 }
-
-.green-section,
+.green-section{
+  background: var(--green);
+  color: #fff;
+  margin-bottom: clamp(48px, 6vw, 96px);
+  margin-top: clamp(48px, 6vw, 96px); /* 48px sur mobile → 96px sur grands écrans */
+}
+/* Évite le !important global. Ajuste seulement les éléments nécessaires : */
 .green-section h1,
 .green-section h2,
-.green-section h3,
-.green-section p,
+.green-section h3{ color: #fff; }
+.green-section p{ color: rgba(255,255,255,0.9); }
+.green-section a{ color: #fff; }
+
+
+.green-section .text-block h1 {
+  color: #fff;                       /* déjà en place mais on confirme */
+  text-shadow: 0 1px 1px rgba(0,0,0,0.12); /* micro contraste optionnel */
+}
+
+.green-section .text-block p {
+  color: rgba(255,255,255,0.92);     /* un peu plus clair que 0.9 */
+  line-height: 1.6;                  /* lisibilité accrue */
+}
+
 .green-section a {
-  color: #ffffff !important;
+  color: #fff;
+  text-decoration-thickness: 2px;    /* souligné plus visible si lien */
 }
 
 
-.white-section {
-  background-color: white;
+.section__inner {
+  width: min(100% - 2rem, var(--container-max));
+  margin-inline: auto;
+  padding-block: clamp(2rem, 6vw, 4rem);
+}
+
+/* Tu appliques .split-section sur section__inner */
+.section__inner.split-section{
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(1rem, 2vw, 2rem);
+  align-items: center;
+}
+@media (min-width: 1024px){
+  .section__inner.split-section{
+    grid-template-columns: 1.15fr 0.85fr;
+  }
 }
 
 
+/* Par défaut 1 colonne */
+.split-section{
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(1rem, 2vw, 2rem);
+  align-items: center;
+}
 
-/* Image section */
-.image-section {
-  position: relative;
+/* Desktop : 2 colonnes, plus d’espace pour le texte */
+@media (min-width: 1024px){
+  .split-section{
+    grid-template-columns: 1.15fr 0.85fr;
+  }
+}
+
+
+/* Blocs internes */
+.text-block{
+  max-width: 70ch; /* limite longueur de ligne */
+}
+.text-block h1{
+  font-family: 'Poppins','Segoe UI',sans-serif;
+  font-weight: 700;
+  font-size: clamp(1.6rem, 1.2rem + 2vw, 2.4rem);
+  line-height: 1.2;
+  margin: 0 0 0.75rem;
+}
+.text-block p{
+  font-family: 'Poppins','Segoe UI',sans-serif;
+  font-weight: 500;
+  font-size: clamp(1rem, 0.95rem + 0.4vw, 1.15rem);
+  color: var(--muted);
+  margin: 0;
+}
+
+.image-block img{
   width: 100%;
   height: auto;
+  display: block;
+  border-radius: 8px;
+  object-fit: cover;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
 }
 
-.image-section img {
+
+/* Limites d'image plus strictes dans les sections split */
+.split-section .image-block {
+  display: grid;
+  place-items: center;
+}
+
+.split-section .image-block img {
   width: 100%;
+  max-width: 520px;                  /* limite la largeur visuelle */
+  height: auto;
+  aspect-ratio: 4 / 3;               /* garde une proportion agréable */
+  object-fit: cover;
+  border-radius: 10px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+  }
+
+/* Sur grands écrans, autoriser un peu plus */
+@media (min-width: 1440px){
+  .split-section .image-block img {
+    max-width: 620px;
+    aspect-ratio: 16 / 10;
+  }
+}
+
+
+.image-section{
+  position: relative;
+  width: 100%;
+}
+.image-section img{
+  width: 100%;
+  height: auto;
   display: block;
 }
-
-.overlay-text {
+.overlay-text{
   position: absolute;
-  top: 50%;
-  left: 50%;
+  inset: 50% auto auto 50%;
   transform: translate(-50%, -50%);
-  color: white;
-  font-size: 2rem;
+  color: #fff;
+  font-size: clamp(1.25rem, 1rem + 1.6vw, 2rem);
   text-align: center;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(0,0,0,0.4);
   padding: 20px;
   border-radius: 10px;
 }
 
 
-/* Sections collées */
-.section {
-  width: 100%;
-  padding: 60px 20px;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start; /* On commence en haut */
-  align-items: center;
-  position: relative;
-  min-height: 400px; /* Pour avoir de la hauteur */
+.stats-section {
+  padding-top: 16px; /* réduit l’espace avant le titre */
+  padding-bottom: clamp(80px, 10vh, 160px);
 }
-
-/* Positionner le contenu à 1/3 */
-.section h2,
-.section p {
-  position: relative;
-  right: 20%; /* 1/3 de la section */
-  transform: translateY(-33%); /* Ajuste pour centrer le bloc */
-}
-
-/* Première section (image) reste centrée */
-.image-section .overlay-text {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
-
-
-.split-section {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  gap: 40px;
-  padding: 60px 10%;
-}
-
-.split-section .text-block {
-  flex: 1;
-  max-width: 25%;
-  text-align: left;
-}
-
-.split-section .image-block {
-  flex: 2;
-  max-width: 66%;
-  display: flex;
-  justify-content: center;
-}
-
-.split-section img {
-  width: 90%;
-  max-width: 400px;
-  height: auto;
-  object-fit: cover;
-  border-radius: 8px;
-}
-
-.split-section h1,
-.split-section p {
-  position: static;
-  transform: none;
-  right: auto;
-}
-
-.section, .section h1, .section p {
-  font-family: 'Poppins', 'Segoe UI', sans-serif;
-  font-weight: 500;
-}
-
-
 
 
 /* ===== Section 4 — Titre ===== */
-.stats-section .section-header {
+.stats-section .section-header{
   text-align: center;
-  margin-bottom: 24px;
+  margin-bottom: clamp(16px, 2vw, 24px);
 }
-
-.stats-section .section-header h1 {
+.stats-section .section-header h1{
   font-size: clamp(28px, 4.5vw, 48px);
   line-height: 1.15;
   margin: 0;
-  font-weight: 700; /* un peu plus fort pour un titre de page */
+  font-weight: 700;
 }
 
-
-/* Grille : OK, on la garde */
-.stats-grid {
+/* ===== Grille de stats ===== */
+/* Par défaut: 2 colonnes (meilleur sur laptop/écrans moyens) */
+.stats-grid{
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(2, minmax(0,1fr));
   gap: 24px;
-  max-width: 1200px;
-  margin: 0 auto 24px;
+  width: min(100% - 2rem, 1200px); /* harmonisé avec --container-max */
+  margin: 0 auto clamp(16px, 2vw, 24px);
   padding: 0 12px;
   list-style: none;
 }
+/* Desktop large: 4 colonnes */
+@media (min-width: 1280px){
+  .stats-grid{ grid-template-columns: repeat(4, minmax(0,1fr)); }
+}
 
-/* Carte : centrage parfait (flex column) */
-.stat-item {
-  display: flex;                 /* flex pour un centrage simple et fiable */
-  flex-direction: column;        /* valeur au-dessus, libellé en dessous */
-  align-items: center;           /* centrage horizontal */
-  justify-content: center;       /* centrage vertical */
+/* Carte */
+.stat-item{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   text-align: center;
-  background: #ffffff;           /* plus contrasté sur fond blanc */
+  background: #ffffff;
   border: 1px solid rgba(15,125,74,0.12);
   border-radius: var(--radius-lg, 12px);
-  padding: 28px 18px;
-  min-height: 160px;             /* garantit une zone “carte” suffisante */
+  padding: clamp(20px, 2vw, 28px) clamp(14px, 2vw, 18px);
+  min-height: 160px;
   box-shadow: 0 6px 18px rgba(0,0,0,0.08);
 }
-
-/* Valeur : grosse, bien lisible */
-.stat-value {
+.stat-value{
   font-size: clamp(36px, 6vw, 64px);
   line-height: 1;
-  font-weight: 800;
+  font-weight: 700;
   letter-spacing: 0.3px;
-  color: var(--green-start, #0f7d4a);
-  margin: 0 0 6px;               /* petit espace avant le libellé */
+  color: var(--green, #0f7d4a); /* harmonisé avec ta variable globale */
+  margin: 0 0 6px;
+  text-decoration: none;
 }
-
-/* Libellé : centré, régulier */
-.stat-label {
+.stat-label{
   font-size: clamp(14px, 2vw, 18px);
   line-height: 1.35;
   color: #5a5a5a;
   margin: 0;
 }
 
+
+/* Le chiffre grossit légèrement au survol */
+.stat-item:hover .stat-value {
+  transform: scale(1.08);
 }
 
-/* ===== Bannière photo (optionnelle) ===== */
-.team-photo {
-  margin-top: 12px;
-  border-radius: var(--radius-lg, 12px);
+/* Transition pour rendre l’effet visible et fluide */
+.stat-value {
+  transition: transform .12s ease;
+  will-change: transform;
+}
+
+/* (Optionnel) Feedback visuel sur la carte au survol */
+.stat-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 26px rgba(0,0,0,0.10);
+  border-color: rgba(15,125,74,0.18);
+  transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease;
+}
+
+
+
+/* Plein viewport, centré (full-bleed) */
+.photo-end{
+  margin: 0;                /* pour coller aux bords */
+  border-radius: 0;         /* bandeau droit */
   overflow: hidden;
-}
-
-.team-photo img {
-  display: block;
-  width: 100%;
-  height: clamp(40vh, 55vh, 70vh); /* présence visuelle sans trop prendre */
-  object-fit: cover;
-  border-radius: var(--radius-lg, 12px);
-  box-shadow: 0 8px 24px rgba(0,0,0,0.18);
-}
-
-
-/* Section 4 : bannière photo pleine largeur, max-height 400px */
-.stats-section {
-  /* si ta section .section a un padding latéral, on peut le réduire pour la photo */
-  padding-left: 0;
-  padding-right: 0;
-}
-
-.team-photo {
-  margin: 0;                     /* on retire la marge pour que l'image touche les bords */
-  border-radius: 0;              /* bord droit si tu veux un rendu plein écran */
-  overflow: hidden;
-  width: 100vw;                  /* prend toute la largeur du viewport */
+  width: 100vw;             /* prend toute la largeur du viewport */
   position: relative;
   left: 50%;
-  transform: translateX(-50%);   /* “déverrouille” des contenants centrés */
+  transform: translateX(-50%); /* “déverrouille” le conteneur centré */
 }
-
-.team-photo img {
+.photo-end img{
   display: block;
   width: 100%;
-  height: 250px;                 /* hauteur fixe */          
-  object-fit: cover;             /* crop propre sans déformation */
-  object-position: center;       /* centrer le cadrage */
+  height: 250px;                 /* hauteur fixe de bandeau */
+  object-fit: cover;
+  object-position: center;
   border-radius: 0;
-  box-shadow: none;              /* (option) pas d’ombre pour un effet bandeau net */
+  box-shadow: none;
 }
 
+/* Espace sous la photo */
+.stats-section .photo-end{
+  margin-bottom: clamp(20px, 4vw, 36px);
+}
 
-/* Reset des règles globales héritées dans la section 4 */
+/* Reset des positions forcées (si des règles globales existent) */
 .stats-section h1,
 .stats-section h2,
-.stats-section p {
+.stats-section p{
   position: static !important;
   right: auto !important;
   transform: none !important;
-  text-align: center; /* on veut du texte centré dans cette section */
-}
-
-
-
-
-/* Wrapper avec texte introductif */
-.stats-cta-wrapper {
   text-align: center;
-  margin-top: clamp(24px, 4vw, 40px);
 }
 
-.cta-intro {
-  font-size: clamp(18px, 2.5vw, 24px);
-  font-weight: 600;
-  margin-bottom: 16px;
-  color: #0f7d4a; /* vert cohérent */
+/* ===== Sponsors (section suivante) ===== */
+#sponsor .section-header{
+  text-align: center;
+  margin-bottom: clamp(16px, 2vw, 24px);
 }
-
-
-/* Rangée de boutons : 3 colonnes fixes */
-.stats-section .stats-cta {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr)); /* 3 colonnes égales */
-  gap: 16px;
-  align-items: stretch;
-  max-width: 1000px;   /* un peu plus large pour éviter les retours à la ligne */
-  margin: 0 auto;
-  padding: 0 12px;
-}
-
-
-
-.btn.btn-green {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-
-  padding: 16px 20px;                     /* compact pour tenir à 3 */
-  font-size: clamp(16px, 1.6vw, 20px);    /* texte qui s’adapte */
+#sponsor .section-header h1{
+  font-size: clamp(28px, 4vw, 44px);
+  line-height: 1.2;
+  margin: 0;
   font-weight: 700;
+}
 
-  border-radius: 999px;
-  background: #0f7d4a;
-  color: #fff;
-  border: none;
-  cursor: pointer;
-
-  min-width: 0; /* important en grid pour éviter les débordements */
+/* (facultatif) grille pour logos de sponsors — ajoute si tu as les images */
+#sponsor .sponsors-grid{
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0,1fr));
+  gap: clamp(12px, 2vw, 20px);
+  width: min(100% - 2rem, 1200px);
+  margin: 0 auto;
+}
+@media (min-width: 1280px){
+  #sponsor .sponsors-grid{ grid-template-columns: repeat(4, minmax(0,1fr)); }
+}
+#sponsor .sponsor-card{
+  display: grid;
+  place-items: center;
+  background: #fff;
+  border: 1px solid rgba(0,0,0,0.08);
+  border-radius: 12px;
+  padding: clamp(12px, 2vw, 18px);
+}
+#sponsor .sponsor-card img{
+  max-width: min(100%, 220px);
+  height: auto;
+  object-fit: contain;
 }
 
 
-.btn.btn-green:hover {
-  transform: translateY(-2px);
-  filter: brightness(1.1);
-}
-
-@media (max-width: 768px) {
-  .stats-cta {
-    flex-direction: column;
-    gap: 12px;
-  }
-  .btn.btn-green {
-    width: 100%;
-  }
+/* Ajoute une marge verticale entre toutes les sections */
+.section {
+  margin-bottom: clamp(48px, 6vw, 96px); /* 48px sur mobile → 96px sur grands écrans */
+  margin-top: clamp(48px, 6vw, 96px); /* 48px sur mobile → 96px sur grands écrans */
 }
 
 
-/* Espace sous la photo de la section 4 */
-.stats-section .team-photo {
-  margin-bottom: clamp(20px, 4vw, 36px);
+#carrevert {
+  background-color: #0f7d4a; /* ton vert */
+  width: 100%;              /* prend toute la largeur */
+  height: 800px;            /* hauteur fixe (ajuste à ton besoin) */
+}
+
+
+.image-en-bas img {
+  display: block;
+  width: 100%;          /* occupe toute la largeur disponible */
+  height: auto;         /* garde les proportions */
+  max-height: 100%;     /* ne dépasse pas la hauteur du parent */
+  object-fit: cover;    /* recadre si nécessaire sans déformer */
+}
+ .ahaha {
+  position: relative;
+  width: 100%;
+  height: 100vh;        /* par exemple, pleine hauteur écran */
+  overflow: hidden;     /* masque tout débordement */
+}
+
+
+
+
+
+
+
+
+
+/* PROJET */
+
+
+
+/* Bloc qui débloque la largeur 100vw même si tes sections sont centrées */
+.top-photo{
+  width: 100vw;              /* plein viewport */
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%); /* “déverrouille” le centrage */
+  overflow: hidden;          /* coupe les débordements si besoin */
+}
+
+/* Image de bannière */
+.top-photo img{
+  display: block;
+  width: 100%;
+  height: clamp(220px, 32vh, 420px); /* hauteur fluide: mobile → desktop */
+  object-fit: cover;                 /* remplissage sans déformation */
+  object-position: center;           /* centre le cadrage */
+  border-radius: 0;
 }
 
 
 
 /* ===== Section départements ===== */
-.dept-section .section-header {
-  text-align: center;
-  margin-bottom: 80px;
-}
 
-.dept-section .section-header h1 {
+
+/* Titre */
+.dept-section .section-header h1{
   font-size: clamp(28px, 4vw, 42px);
   line-height: 1.2;
   font-weight: 700;
   margin: 0;
 }
 
-/* Grille 3x2 avec lignes verticales uniquement */
-.departments-grid {
+/* ===== Grille 3→2→1 avec séparations vertes propres ===== */
+
+/* Grille 3→2→1 avec séparations verticales visibles en permanence */
+.departments-grid{
+  position: relative;
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 0; /* pas d'espace entre les cases pour des lignes nettes */
-  max-width: 1200px;
-  width: 100%;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0; /* lignes nettes */
+  width: min(100% - 2rem, 1200px);
   margin: 0 auto;
-  border-left: 4px solid var(--green-start, #0f7d4a);   /* ligne verticale externe gauche */
-  border-right: 4px solid var(--green-start, #0f7d4a);  /* ligne verticale externe droite */
 }
 
-/* Cases cliquables */
-.dept-card {
+/* Cartes : gardent leur fond blanc, ombre, etc. */
+.dept-card{
   position: relative;
+  z-index: 1; /* cartes sous les séparations */
   display: flex;
   flex-direction: column;
   justify-content: center;
+  gap: 8px;
   padding: 28px 22px;
   min-height: 180px;
   background: #fff;
   text-decoration: none;
   color: inherit;
-  transition: background-color 0.25s ease, transform 0.2s ease;
+  transition: background-color 0.25s ease, transform 0.2s ease, box-shadow 0.25s ease;
+  border-radius: 10px;
 }
 
-/* Lignes verticales internes : colonne 2 et 3 */
-.departments-grid .dept-card:nth-child(3n+2),
-.departments-grid .dept-card:nth-child(3n+3) {
-  border-left: 4px solid var(--green-start, #0f7d4a);
+/* === OVERLAY DES SÉPARATIONS ===
+   On dessine les 2 filets internes + les 2 externes au-dessus des cartes */
+.departments-grid::before{
+  content: "";
+  pointer-events: none;            /* ne bloque pas les interactions */
+  position: absolute;
+  inset: 0;                        /* couvre tout le container */
+  z-index: 2;                      /* AU-DESSUS des cartes */
+  /* 4 gradients : gauche, (col1|col2), (col2|col3), droite */
+background:
+    linear-gradient(to right, #0f7d4a 0 4px, transparent 4px) left / 4px 100% no-repeat,
+    linear-gradient(to right, #0f7d4a 0 4px, transparent 4px) calc(100% / 3) 0 / 4px 100% no-repeat,
+    linear-gradient(to right, #0f7d4a 0 4px, transparent 4px) calc(2 * 100% / 3) 0 / 4px 100% no-repeat,
+    linear-gradient(to left,  #0f7d4a 0 4px, transparent 4px) right / 4px 100% no-repeat;
 }
 
 
-/* Titre dans les cases */
-.dept-title {
-  font-size: clamp(22px, 2.4vw, 26px); /* légèrement plus grand */
+
+/* ===== Cartes ===== */
+.dept-card{
+  position: relative;
+  z-index: 1;                          /* au-dessus des lignes */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+  padding: 28px 22px;
+  min-height: 180px;
+  background: #fff;
+  text-decoration: none;
+  color: inherit;
+  transition: background-color 0.25s ease, transform 0.2s ease, box-shadow 0.25s ease;
+  border-radius: 10px;                 /* rayon léger */
+}
+
+.dept-card:hover{
+  background-color: rgba(15,125,74,0.06);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+}
+
+/* Titre & description : la desc. apparaît sous le titre au hover/focus */
+.dept-title{
+  font-size: clamp(22px, 2.4vw, 26px);
   font-weight: 700;
-  margin: 0 0 8px;
-  color: #000; /* noir */
+  margin: 0;                           /* pas d'espace dessous, on gère via .cell-desc */
+  color: #000;
 }
 
-
-.cell-desc {
+.cell-desc{
   font-size: clamp(14px, 1.6vw, 16px);
-  line-height: 1.45;
+  line-height: 1.5;
   color: #444;
-  margin: 0;
-  padding-left: 0; /* même alignement que le titre */
-  padding-left: 18%;
-  max-width: 90%; /* empêche de toucher la bordure */
-  
+  margin: 0;                           /* se colle juste sous le titre */
+  max-width: 65ch;                     /* lisible */
   opacity: 0;
   max-height: 0;
   transform: translateY(6px);
-  transition: opacity 0.25s ease, transform 0.25s ease, max-height 0.25s ease;
+  transition:
+    opacity 0.25s ease,
+    transform 0.25s ease,
+    max-height 0.25s ease;
   overflow: hidden;
 }
 
-
-/* Affichage à l'interaction (accessibilité incluse) */
+/* Au survol / focus clavier : la description se déploie sous le titre */
 .dept-card:hover .cell-desc,
 .dept-card:focus .cell-desc,
-.dept-card:focus-visible .cell-desc {
+.dept-card:focus-visible .cell-desc{
   opacity: 1;
-  max-height: 180px;
+  max-height: 220px;
   transform: translateY(0);
 }
 
-/* Petite interaction visuelle */
-.dept-card:hover {
-  background-color: rgba(15, 125, 74, 0.06);
-  transform: translateY(-2px);
+/* Focus accessible */
+.dept-card:focus-visible{
+  outline: 3px solid #2684ff;
+  outline-offset: 2px;
+  border-radius: 10px;
 }
 
-/* Responsive : passe à 2 colonnes sur tablette, 1 sur mobile */
-@media (max-width: 992px) {
-  .departments-grid {
-    grid-template-columns: repeat(2, 1fr);
+
+/* Responsive : 2 colonnes → 1 colonne */
+@media (max-width: 992px){
+  .departments-grid{
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
-  /* Verticales pour 2 colonnes : col 2 seulement */
-  .departments-grid .dept-card {
-    border-left: none;
-  }
-  .departments-grid .dept-card:nth-child(2n) { /* deuxième colonne */
-    border-left: 2px solid var(--green-start, #0f7d4a);
+  .departments-grid::before{
+    background:
+      /* externe gauche */
+      linear-gradient(to right, #0f7d4a 0 2px, transparent 2px) left / 2px 100% no-repeat,
+      /* interne centrale (entre col 1 et 2) */
+      linear-gradient(to right, #0f7d4a 0 2px, transparent 2px) 50% 0 / 2px 100% no-repeat,
+      /* externe droite */
+      linear-gradient(to left, #0f7d4a 0 2px, transparent 2px) right / 2px 100% no-repeat;
   }
 }
 
-@media (max-width: 560px) {
-  .departments-grid {
+@media (max-width: 560px){
+  .departments-grid{
     grid-template-columns: 1fr;
-    border-left: none;
-    border-right: none;
   }
-  /* Sur mobile, on retire les lignes pour la lisibilité */
-  .departments-grid .dept-card {
-    border-left: none !important;
+  /* Sur mobile, on retire toutes les séparations pour la lisibilité */
+  .departments-grid::before{
+    background: none;
   }
 }
 
 
-section[id^="section_"] {
-  scroll-margin-top: 100px; /* Ajuste selon la hauteur de ta barre (80px + marge) */
+/* Espace entre "Nos différents départements" et le tableau */
+.dept-section .section-header{
+  margin-bottom: clamp(24px, 4vw, 48px);
 }
 
 
 
-/* Couleur verte configurée (utilise ta variable si disponible) */
-:root {
-  --brand-green: var(--green-start, #0f7d4a);
+/* ----- Variables marque ----- */
+:root{
+  --brand-green: var(--green, #0f7d4a);   /* si --green existe déjà chez toi */
+  --container-max: 1200px;
+  --section-gap: clamp(48px, 6vw, 96px); /* espace entre sections */
 }
 
-/* Séparateur aligné avec le contenu */
-.section-separator {
-  width: 100%;
-  max-width: 1200px;     /* même max que tes sections */
-  margin: 20px auto;     /* 20px en haut et en bas, centré */
-  padding: 0 12px;       /* même padding latéral que tes grilles si besoin */
-  box-sizing: border-box;
+/* ----- Sections blanches du bloc équipe/départements ----- */
+.section.white-section1{
+  width: min(100% - 2rem, var(--container-max));
+  margin-inline: auto;
+  padding-block: clamp(1.5rem, 4vw, 2.5rem);
 }
 
-/* La ligne elle-même */
-.section-separator::before {
+/* Ancres : évite que la topbar recouvre le titre */
+section[id^="section_"]{
+  scroll-margin-top: clamp(80px, 10vw, 120px);
+}
+
+/* ----- Titre vert ----- */
+.big-green-title{
+  font-size: clamp(36px, 5vw, 64px);
+  font-weight: 800;
+  color: var(--brand-green);
+  text-align: left;           /* commentaire corrigé : “aligné à gauche” */
+  margin: 0 0 clamp(14px, 2vw, 20px);
+}
+
+/* ----- Séparateur automatique AVANT chaque section (sauf la première) ----- */
+/* Variante alignée au contenu */
+.section.white-section1 + .section.white-section1{
+  margin-top: var(--section-gap);
+  position: relative;
+}
+.section.white-section1 + .section.white-section1::before{
   content: "";
   display: block;
-  height: 5px;                      /* épaisseur de la ligne */
-  background-color: var(--brand-green); /* vert */
-  border-radius: 999px;             /* coins légèrement arrondis */
+  width: min(100% - 2rem, var(--container-max)); /* aligné au contenu */
+  height: 5px;
+  margin: 0 auto var(--section-gap);
+  border-radius: 999px;
+  background-color: var(--brand-green);
+}
+
+/* ----- (Option) Variante “full-bleed” (plein écran) -----
+   ➜ Si tu préfères que la ligne touche les bords du viewport,
+   commente le bloc ci-dessus et dé-commente ce bloc.
+
+.section.white-section1 + .section.white-section1::before{
+  content: "";
+  display: block;
+  width: 100vw;              /* plein écran */
+  height: 5px;
+  margin: 0 0 var(--section-gap) 50%;
+  transform: translateX(-50%); /* déverrouille le centrage */
+  border-radius: 999px;
+  background-color: var(--brand-green);
+}
+*/
+
+/* ----- Texte des paragraphes : lisibilité et largeur ----- */
+.section.white-section1 p{
+  max-width: 70ch;
+  line-height: 1.6;
+  color: #222;
+  margin: 0; /* titre gère le spacing au-dessus */
 }
 
 
 
-.big-green-title {
-  font-size: clamp(36px, 5vw, 64px); /* très grand, responsive */
-  font-weight: 800;                  /* bien marqué */
-  color: var(--green-start, #0f7d4a); /* vert cohérent */
-  text-align: left;             /* centré dans la section */
-  margin-bottom: 30px;               /* espace avec le texte */
-}
 
 
 
-.section.white-section1 p {
-  max-width: 100%; /* empêche de dépasser la section */
-  overflow-wrap: break-word; /* coupe les mots trop longs */
-  word-break: break-word;
-  margin-left: 40%
-  text-align: left;  
-}
+
+/* JE ME SUIS ARRETER LAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA */
+
+
+
+
 
 
 .team-grid {
+  --card-min: 100px; /* largeur mini d'une carte */
+  --gap: 24px;
+
   display: grid;
-  grid-template-columns: repeat(3, 200px); /* 3 colonnes */
-  grid-template-rows: repeat(2, auto); /* 2 lignes */
-  gap: 20px; /* espace entre les cases */
-  margin-right: 20%; /* décalage à 40% de la gauche */
+  grid-template-columns: repeat(auto-fit, minmax(var(--card-min), 0.7fr));
+  gap: var(--gap);
 }
+
+
 
 .team-member {
-  text-align: left;
-}
-
-.team-member img {
-  width: 100%; /* taille des photos */
-  height: 80%;
-  object-fit: cover;
-  border-radius: 8px; /* coins arrondis */
-}
-
-.team-member p {
-  margin-top: 5px;
-  font-size: 17px;
-  font-weight: bold;
-  margin-left: 20%;
-}
-
-.team-member p.p1 {
-	font-weight: normal;
-}
-
-
-
-.contact-section11 {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 60px 10%;
-  background-color: #ffffff; /* fond blanc */
+  flex-direction: column;
+  gap: 8px;
+}
+
+.team-member .avatar {
+  width: 100%;
+  aspect-ratio: 1 / 1;     /* carré cohérent */
+  object-fit: cover;
+  border-radius: 10px;
+  background: #f2f2f2;
+}
+
+.team-member .name {
+  font-size: clamp(0.95rem, 0.9rem + 0.2vw, 1.05rem);
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.team-member .role {
+  font-weight: 400;
+  color: #555;
+}
+
+
+.section {
+  padding: clamp(24px, 3vw, 48px) 16px;
+}
+
+.section .container {
+  max-width: 1100px;
+  margin-inline: auto;
+}
+
+
+
+/* ================================
+   Variables & bases
+   ================================ */
+:root {
+  --accent: #0f7d4a;        /* vert principal */
+  --accent-600: #0c6c42;    /* hover */
+  --accent-700: #095c38;    /* focus outline */
+  --text-on-accent: #ffffff;
+  --container-max: 1100px;
+  --gap: 24px;
+  --radius: 12px;
+  --shadow-1: 0 4px 10px rgba(0,0,0,0.18);
+  --shadow-2: 0 8px 20px rgba(0,0,0,0.12);
+}
+
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+img { display: block; max-width: 100%; height: auto; }
+
+/* ================================
+   Section contact (mobile-first)
+   ================================ */
+.contact-section11 {
+  display: block;
+  padding: clamp(32px, 4vw, 60px) 16px;
+  background-color: #ffffff;
 }
 
 .contact-container11 {
-  display: flex;
-  flex-direction: row;
-  gap: 40px;
-  align-items: center;
-  justify-content: center;
+  max-width: var(--container-max);
+  margin-inline: auto;
+
+  /* Passage en grille pour un layout fluide sans modifier le HTML */
+  display: grid;
+  gap: var(--gap);
+  grid-template-columns: 1fr; /* mobile */
+  align-items: start;
 }
 
+/* Desktop : texte / image */
+@media (min-width: 900px) {
+  .contact-container11 {
+    grid-template-columns: 1.1fr 0.9fr;
+  }
+}
+
+/* ================================
+   Bloc vert
+   ================================ */
 .contact-box11 {
-  background-color: #0f7d4a; /* même vert que le site */
-  color: white;
-  width: 550px;
-  padding: 40px;
-  border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  background-color: var(--accent);
+  color: var(--text-on-accent);
+  padding: clamp(24px, 3vw, 40px);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-1);
   text-align: left;
+  width: 100%;            /* remplace le width: 550px figé */
+  max-width: 640px;       /* cap confortable */
 }
 
 .contact-box11 h1 {
-  font-size: 32px;
-  margin-bottom: 20px;
+  font-size: clamp(1.6rem, 1.2rem + 1.2vw, 2rem);
+  margin: 0 0 12px 0;
 }
 
 .contact-box11 p {
-  font-size: 16px;
-  line-height: 1.5;
-  margin-bottom: 30px;
+  font-size: 1rem;
+  line-height: 1.6;
+  margin: 0 0 18px 0;
 }
 
+/* ================================
+   Boutons (verts, accessibles)
+   ================================ */
 
-* Image à droite */
+/* Conteneur des boutons */
+.lien-externe {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+/* Style de base des boutons .btn existants */
+.btn {
+  appearance: none;
+  border: none;
+  border-radius: 999px;
+  padding: 10px 16px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  transition: transform .12s ease, box-shadow .12s ease, background-color .12s ease, color .12s ease;
+}
+
+/* Vert uniforme sur tous les boutons demandés */
+.btn.btn-green {
+  background: var(--accent);
+  color: var(--text-on-accent);
+  box-shadow: var(--shadow-1);
+}
+
+/* Etats interactifs */
+.btn.btn-green:hover {
+  background: var(--accent-600);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.18);
+}
+
+.btn.btn-green:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow-1);
+}
+
+/* Accessibilité (focus clavier) */
+.btn:focus-visible {
+  outline: 3px solid var(--accent-700);
+  outline-offset: 2px;
+}
+
+/* Si tu veux un bouton-lien visuellement plus "plat", on peut réduire l’ombre */
+.btn-link.btn-green {
+  box-shadow: 0 2px 6px rgba(0,0,0,0.14);
+}
+
+/* ================================
+   Image à droite (sans changer le HTML)
+   ================================ */
+
 .contact-image11 {
-  flex: 1 1 420px;
+  /* La div de l’image suit la grille */
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .contact-image11 img {
-  width: 50%;
-  max-width: 520px;
-  height: 50%;
-  border-radius: 12px;
+  width: 100%;
+  max-width: 520px;        /* cap taille */
+  aspect-ratio: 4 / 3;     /* ratio stable */
+  border-radius: var(--radius);
   object-fit: cover;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+  box-shadow: var(--shadow-2);
+  /* centré automatiquement en mobile */
+}
+
+/* ================================
+   Réduction des animations si demandé
+   ================================ */
+@media (prefers-reduced-motion: reduce) {
+  .btn { transition: none; }
+}
+
+
+
+.contact-image-bas {
+  /* déjà présent pour le full-bleed */
+  position: relative;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+  width: 100vw;
+  max-width: 100vw;
+  overflow: hidden; /* si tu fais une bannière recadrée */
+
+  /* 👉 marge au-dessus de l'image */
+  margin-top: clamp(8px, 2vw, 24px);
+}
+
+.contact-image-bas img {
+  display: block;
+  width: 100%;
+  height: auto;          /* ou une bannière: height: 50vh; object-fit: cover; */
+  /* height: 50vh; object-fit: cover; object-position: center;  */
+}
+
+
+/* 1) Assure que le conteneur contact est en grid (si ce n'est pas déjà le cas) */
+.contact-container11 {
+  display: grid;
+  gap: 24px;
+  /* Ta config existante éventuelle : */
+  grid-template-columns: 1.1fr 0.9fr; /* desktop: bloc vert / image droite */
+}
+
+/* Mobile: une colonne */
+@media (max-width: 900px) {
+  .contact-container11 {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* 2) L'image full-bleed doit s'étendre sur TOUTES les colonnes de la grid */
+.contact-image-bas {
+  grid-column: 1 / -1;          /* <-- IMPORTANT: span sur toute la grille */
+  position: relative;
+  /* Technique full-bleed : on sort du container centré */
+  left: 50%;
+  margin-left: -50vw;
+  width: 100vw;
+  max-width: 100vw;
+  max-height: 20vw;
+  overflow: hidden;
+  /* Marge au-dessus */
+  margin-top: clamp(8px, 2vw, 24px);
+}
+
+/* 3) Image qui remplit la largeur de l'écran */
+.contact-image-bas img {
+  display: block;
+  width: 100%;
+  height: auto;                  /* ou bannière recadrée (ci-dessous) */
+  /* Pour une bannière recadrée :
+     height: 50vh;
+     object-fit: cover;
+     object-position: center;
+  */
+}
+
+/* 4) Évite une barre de scroll horizontale quand on "débord" volontairement */
+html, body {
+  overflow-x: hidden;
 }
