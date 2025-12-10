@@ -354,13 +354,16 @@ main{
 
 .split-section .image-block img {
   width: 100%;
-  max-width: 520px;                  /* limite la largeur visuelle */
-  height: auto;
-  aspect-ratio: 4 / 3;               /* garde une proportion agréable */
-  object-fit: cover;
-  border-radius: 10px;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
-  }
+  max-width: none;     /* supprime la limite à 520px/620px */
+  height: auto;        /* hauteur naturelle selon l'image */
+  aspect-ratio: auto;  /* enlève le ratio imposé */
+  object-fit: contain; /* évite le recadrage; garde l'image entière */
+  
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+
+}
 
 /* Sur grands écrans, autoriser un peu plus */
 @media (min-width: 1440px){
@@ -838,6 +841,11 @@ section[id^="section_"]{
 }
 
 
+
+/* Mettre les noms en gras */
+.p1 {
+  font-weight: bold;
+}
 
 
 
